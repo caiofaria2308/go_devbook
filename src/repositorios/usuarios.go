@@ -65,3 +65,43 @@ func (respositorio Usuarios) Buscar(nomeOuNick string) ([]models.Usuario, error)
 	}
 	return usuarios, nil
 }
+
+//buscar por id retorna apenas um usuario do banco de dados
+func (respositorio Usuarios) BuscarPorID(ID int64) (models.Usuario, error) {
+	linhas, erro := respositorio.db.Query(
+		"select id, nome, nick, criadoEm from usuarios where id = ?",
+		ID,
+	)
+	if erro != nil {
+		return models.Usuario{}, erro
+	}
+	defer linhas.Close()
+	var usuario models.Usuario
+	if linhas.Next() {
+		if erro = linhas.Scan(
+			&usuario.ID,
+			&usuario.Nome,
+			&usuario.Nick,
+			&usuario.CriandoEm,
+		); erro != nil {
+			return models.Usuario{}, erro
+		}
+	}
+	return usuario, nil
+}
+
+//Atualizar atualiza usuário no banco
+func (repositorio Usuarios) Atualizar(usuarioID int64, usuario models.Usuario) error {
+	statement, erro := repositorio.db.Prepare(
+		"update usuarios set nome = ?, nick = ?, email = ? where id = ?",
+	)
+	if erro != nil {
+		return erro
+	}
+	defer statement.Close()
+	_, erro = statement.Exec(usuario.Nome, usuario.Nick, usuario.Email, usuarioID)
+	if erro != nil {
+		return erro
+	}
+	return nil
+}
