@@ -42,6 +42,7 @@ func CriarUsuario(w http.ResponseWriter, r *http.Request) {
 	repositorio := repositorios.NovoRepositorioUsuarios(db)
 	usuarioId, erro := repositorio.Criar(usuario)
 	usuario.ID = usuarioId
+	usuario.Senha = ""
 
 	if erro != nil {
 		respostas.Erro(w, http.StatusInternalServerError, erro)
