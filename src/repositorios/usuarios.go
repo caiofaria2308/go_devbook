@@ -91,7 +91,7 @@ func (respositorio Usuarios) BuscarPorID(ID int64) (models.Usuario, error) {
 }
 
 //BuscarPorEmail busca usuário por email e retorna seu id e senha com hash
-func (repositorio Usuarios) BuscarPorEmail(email string) (models.Usuario, error){
+func (repositorio Usuarios) BuscarPorEmail(email string) (models.Usuario, error) {
 	linha, erro := repositorio.db.Query(
 		"select id, senha from usuarios where email = ?",
 		email,
@@ -101,13 +101,13 @@ func (repositorio Usuarios) BuscarPorEmail(email string) (models.Usuario, error)
 	}
 	defer linha.Close()
 	var usuario models.Usuario
-	if linha.Next(){
+	if linha.Next() {
 		if erro = linha.Scan(&usuario.ID, &usuario.Senha); erro != nil {
 			return models.Usuario{}, erro
 		}
 	}
 	return usuario, nil
-	
+
 }
 
 //Atualizar atualiza usuário no banco
@@ -140,5 +140,3 @@ func (repositorio Usuarios) Deletar(usuarioID int64) error {
 	}
 	return nil
 }
-
-

@@ -1,6 +1,7 @@
 package rotas
 
 import (
+	"api/src/middlewares"
 	"fmt"
 	"net/http"
 
@@ -19,9 +20,17 @@ type Rota struct {
 func Configurar(r *mux.Router) *mux.Router {
 	rotas := rotasUsuarios
 	rotas = append(rotas, rotaLogin)
-	for _, rota := range rotas{
+	for _, rota := range rotas {
 		fmt.Printf("Criando rota %s\n", rota.URI)
-		r.HandleFunc(rota.URI, rota.Funcao).Methods(rota.Metodo)
+		if rota.RequerAutentitacao {
+			r.HandleFunc(rota.URI,
+				 middlewares.Logger(middlewares.Autenticar(rota.Funcao)),
+				 ).Methods(rota.Metodo)
+		} else {
+			r.HandleFunc(rota.URI, 
+				middlewares.Logger(rota.Funcao),
+			).Methods(rota.Metodo)
+		}
 	}
 	return r
 }

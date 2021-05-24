@@ -19,6 +19,11 @@ type Usuario struct {
 	CriandoEm time.Time `json:"criandoEm,omitempty"`
 }
 
+//UsuarioToken representa um token gerado no login
+type UsuarioToken struct {
+	Token string `json:"token,omitempty"`
+}
+
 //Preparar vai chamar os metodos para validar e formatar o usuário recebido
 func (usuario *Usuario) Preparar(etapa string) error {
 	if erro := usuario.validar(etapa); erro != nil {
@@ -37,15 +42,15 @@ func (usuario *Usuario) validar(etapa string) error {
 		return errors.New("'nick' é um campo obrigatório")
 	} else if usuario.Email == "" {
 		return errors.New("'email' é um campo obrigatório")
-	} else if erro := checkmail.ValidateFormat(usuario.Email); erro != nil{
+	} else if erro := checkmail.ValidateFormat(usuario.Email); erro != nil {
 		return errors.New("'email' inválido")
-	}else if etapa == "cadastro" && usuario.Senha == "" {
+	} else if etapa == "cadastro" && usuario.Senha == "" {
 		return errors.New("'senha' é um campo obrigatório")
 	}
 	return nil
 }
 
-func (usuario *Usuario) formatar(etapa string) error{
+func (usuario *Usuario) formatar(etapa string) error {
 	usuario.Nome = strings.TrimSpace(usuario.Nome)
 	usuario.Nick = strings.TrimSpace(usuario.Nick)
 	usuario.Email = strings.TrimSpace(usuario.Email)

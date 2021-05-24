@@ -40,8 +40,12 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		respostas.Erro(w, http.StatusUnauthorized, erro)
 		return
 	}
-	token, _ := autenticacao.CriarToken(usuarioDatabase.ID)
-	respostas.JSON(w, http.StatusAccepted, token)
+	token, erro := autenticacao.CriarToken(usuarioDatabase.ID)
+	if erro != nil {
+		respostas.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+	usuarioToken := models.UsuarioToken{Token: token}
+	respostas.JSON(w, http.StatusAccepted, usuarioToken)
 	return
-
 }
